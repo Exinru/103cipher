@@ -1,0 +1,37 @@
+#!/usr/bin/python3
+##
+## EPITECH PROJECT, 2023
+## 106bombyx
+## File description:
+## bunny population
+##
+
+def recurrence_relation(k, x):
+    return k * x * (1000 - x) / 1000
+
+def generate_sequence(k, x0, n):
+    sequence = [x0]
+    for i in range(1, n):
+        xi = recurrence_relation(k, sequence[-1])
+        sequence.append(xi)
+    return sequence
+
+def print_sequence_vs_k(n, x0, k_range):
+    k_values = [round(k, 2) for k in range(k_range[0], k_range[1] + 1)]
+    
+    print("  k   |   xi values")
+    print("-" * 25)
+    
+    for k in k_values:
+        sequence = generate_sequence(k, x0, n)
+        print(f"{k:<6}|   {' '.join(map(lambda x: f'{x:.4f}', sequence))}")
+
+# Example: Printing for n=10, initial value x0=0.5, k ranging from 1 to 4
+print_sequence_vs_k(n=10, x0=0.5, k_range=(100, 400))
+
+if __name__ == "__main__":
+   try:
+        main()
+ except Exception as e:
+		print(e, file=sys.stderr)
+		exit(84)

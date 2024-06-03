@@ -1,0 +1,82 @@
+#!/usr/bin/python3
+##
+## EPITECH PROJECT, 2023
+## 102architect
+## File description:
+## architect maths
+##
+
+import matrixes
+import ascii_helper
+import sys
+import math
+
+def print_usage():
+    print("USAGE\n    ./103cipher message key flag\n")
+    print("DESCRIPTION")
+    print("    message    a message, made of ASCII characters")
+    print("    key        the encryption key, made of ASCII characters")
+    print("    flag       0 for the message to be encrypted, "
+          "1 to be decrypted")
+
+def create_key(key):
+        key = ascii_helper.str_to_ascii(key)
+        size = math.ceil(len(key) ** 0.5)
+        key = ascii_helper.trailing_zero(key, size * size)
+        key_matrix = matrixes.Matrix(size, size, key)
+        if key_matrix.det() == 0:
+            raise ValueError("The determinant of the key is 0")
+        return key_matrix
+
+def create_message(message, width):
+    height = math.ceil(len(message) / width)
+    message = ascii_helper.trailing_zero(message,
+        width * height)
+    return matrixes.Matrix(width, height, message)
+
+def encrypt():
+        key = create_key(sys.argv[2])
+        message = create_message(ascii_helper.str_to_ascii(sys.argv[1]),
+            key.width)
+
+        print("Key matrix:")
+        print(key)
+        print()
+        print("Encrypted message:")
+        print(str(message * key)\
+            .replace("\n", "\t").replace("\t", " "))
+
+def decrypt():
+        key = create_key(sys.argv[2]).inverse()
+        message = create_message([int(i) for i in sys.argv[1].split(" ")],
+            key.width)
+
+        print("Key matrix:")
+        print(matrixes.matrix_print_asf(key))
+        print()
+        print("Decrypted message:")
+        print(ascii_helper.ascii_to_str((message * key)\
+            .to_list()))
+
+def codec():
+    if sys.argv[3] == "0":
+        encrypt()
+    elif sys.argv[3] == "1":
+        decrypt()
+
+def main():
+    if len(sys.argv) != 2 and len(sys.argv) != 4:
+        raise Exception("Invalid amount of arguments")
+    if len(sys.argv) == 2 and sys.argv[1] == "-h":
+        print_usage()
+    elif sys.argv[3] == "0" or sys.argv[3] == "1":
+        codec()
+as    else:
+        raise Exception("Invalid arguments")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        print(e, file=sys.stderr)
+        exit(84)
